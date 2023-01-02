@@ -197,9 +197,10 @@ def clockd_two(wassec):
         return str(cl[0]) + ":" + sec
 
 def print_clocks():
-    for o in range(players ):
-        print(player_names[o].title() + "  |  " + clockd_two(atime[o]) + "  ")
+    for o in range(players):
+        print(player_names[o].title() + " " * (20 - len(player_names[o])) + "|  " + clockd_two(atime[o]) + "  ")
 player = 0
+spent = 0
 print()
 while True:
     # How to display the time
@@ -248,12 +249,12 @@ while True:
                     sys.exit()
                 else:
                     ch = None
-                    for o in range(players + 3):
+                    for o in range(players + 4):
                         print("\033[A", end="")
                     break
             except CancellationException:
                 ch = None
-                for o in range(players + 3):
+                for o in range(players + 4):
                     print("\033[A", end="")
                 print("                ")
                 break
@@ -267,15 +268,21 @@ while True:
                 print("                                         ")
                 print("\033[A", end="")
                 print("\033[A", end="")
+    if ch == "\x7f":
+        atime[player] += spent
+        player -= 1
+        atime[player] -= increment[player]
+        ch = None
     if ch is None:#the clock continues
         if player == players:
             player = 0
         print("\033[A", end="")
+        print("MOVE  " + str(move))
         print_clocks()
         print(player_names[player].upper() + "                      ")
         print("____________                      ")
         print(clockd_two(atime[player]) + "                      ")
-        for o in range(players):
+        for o in range(players + 1):
             print("\033[A", end="")
         print("\033[A", end="")
         print("\033[A", end="")
@@ -286,7 +293,7 @@ while True:
                 print("\033[B", end="")
                 sys.exit()
             else:
-                for o in range(players - 1):
+                for o in range(players + 1):
                     print("\033[B", end="")
                 print(player_names[player].upper() + " LOST ON TIME    - - - - - - -        ")
                 print("\033[B", end="")
@@ -305,13 +312,15 @@ while True:
                     print("\033[A", end="")
                     print("\033[A", end="")
                     print("\033[A", end="")
-                    for o in range(players):
+                    for o in range(players + 1):
                         print("\033[A", end="")
         else:
             atime[player] -= timeout_v
+            spent += timeout_v
     else:#pass the turn
         atime[player] += increment[player]
         player += 1
+        spent = 0
         if player == players:
             move += 1
             player = 0
