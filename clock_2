@@ -269,10 +269,15 @@ while True:
                 print("\033[A", end="")
                 print("\033[A", end="")
     if ch == "\x7f":
-        atime[player] += spent
-        player -= 1
-        atime[player] -= increment[player]
-        ch = None
+        try:
+            if move == 0 and player == 0:
+                raise CancellationException()
+            atime[player] += spent
+            player -= 1
+            atime[player] -= increment[player]
+            ch = None
+        except CancellationException:
+            pass
     if ch is None:#the clock continues
         if player == players:
             player = 0
